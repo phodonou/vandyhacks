@@ -27,16 +27,17 @@ class MyApp extends StatelessWidget {
               future: getDocs(snapshot),
               builder: (BuildContext context , AsyncSnapshot<List<Component>> appChildren){
                 if(!appChildren.hasData) return Center(child: CircularProgressIndicator(),);
+                //debugPrint("${appChildren.data.toString()}");
                 // turn each component to widget
                 List<Widget> bodyWidgets = [];
                 for(Component comp in appChildren.data){
                     bodyWidgets.add(
                       buildWidget(comp)
                     );
-                    bodyWidgets.add(
-                      SizedBox(height: 20.0,)
-                    );
                 }
+//                for(Container cont in bodyWidgets){
+//                  debugPrint(cont.child.children.toString());
+//                }
                 //display each component
                 return Container(
                   margin: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
@@ -58,7 +59,17 @@ class MyApp extends StatelessWidget {
     if(comp.children.length == 0 ){
       if(comp.widget == "Button"){
         return renderSingleWidget(widget: comp.widget , extras:{'hasText':comp.extras['hasText']});
-      }else{
+
+      }
+      else if(comp.widget == "TextField"){
+        return Flexible(
+          child: Container(
+            margin: EdgeInsets.symmetric(horizontal: 10.0),
+            child: renderSingleWidget(widget: comp.widget),
+          ),
+        );
+      }
+      else{
         return renderSingleWidget(widget: comp.widget);
       }
     }
@@ -90,14 +101,10 @@ class MyApp extends StatelessWidget {
       break;
 
       case  "TextField": {
-        return Container(
-          child: Expanded(
-            child: TextField(
-                decoration: InputDecoration(
-                  labelText: 'Your Input Here'
-                ),
-              ),
-        )
+        return TextField(
+          decoration: InputDecoration(
+              labelText: 'Your Input Here'
+          ),
         );
       }
       break;

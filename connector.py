@@ -8,19 +8,19 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-# output = [{'label': 'text', 'confidence': 0.28543407, 'topleft': {'x': 0, 'y': 291}, 'bottomright': {'x': 235, 'y': 452}},
-# {'label': 'text', 'confidence': 0.11161788, 'topleft': {'x': 0, 'y': 586}, 'bottomright': {'x': 198, 'y': 729}},
-# {'label': 'textfield', 'confidence': 0.16267988, 'topleft': {'x': 235, 'y': 593}, 'bottomright': {'x': 741, 'y': 742}},
-# {'label': 'text', 'confidence': 0.095825784, 'topleft': {'x': 116, 'y': 779}, 'bottomright': {'x': 301, 'y': 955}},
-# {'label': 'text', 'confidence': 0.40040737, 'topleft': {'x': 503, 'y': 797}, 'bottomright': {'x': 696, 'y': 912}},
-# {'label': 'button', 'confidence': 0.17572533, 'topleft': {'x': 429, 'y': 775}, 'bottomright': {'x': 749, 'y': 949}},
-# {'label': 'appbar', 'confidence': 0.31654927, 'topleft': {'x': 74, 'y': 0}, 'bottomright': {'x': 749, 'y': 146}},
-# {'label': 'textfield', 'confidence': 0.09217384, 'topleft': {'x': 215, 'y': 288}, 'bottomright': {'x': 749, 'y': 434}},
-# {'label': 'button', 'confidence': 0.11535523, 'topleft': {'x': 64, 'y': 761}, 'bottomright': {'x': 341, 'y': 971}}]
-output = [
-{'label': 'text', 'confidence': 0.46804085, 'topleft': {'x': 230, 'y': 50}, 'bottomright': {'x': 906, 'y': 249}},
-{'label': 'button', 'confidence': 0.67056483, 'topleft': {'x': 430, 'y': 50}, 'bottomright': {'x': 1304, 'y': 726}},
-]
+output = [{'label': 'text', 'confidence': 0.28543407, 'topleft': {'x': 0, 'y': 291}, 'bottomright': {'x': 235, 'y': 452}},
+{'label': 'text', 'confidence': 0.11161788, 'topleft': {'x': 0, 'y': 586}, 'bottomright': {'x': 198, 'y': 729}},
+{'label': 'textfield', 'confidence': 0.16267988, 'topleft': {'x': 235, 'y': 593}, 'bottomright': {'x': 741, 'y': 742}},
+{'label': 'text', 'confidence': 0.095825784, 'topleft': {'x': 116, 'y': 779}, 'bottomright': {'x': 301, 'y': 955}},
+{'label': 'text', 'confidence': 0.40040737, 'topleft': {'x': 503, 'y': 797}, 'bottomright': {'x': 696, 'y': 912}},
+{'label': 'button', 'confidence': 0.17572533, 'topleft': {'x': 429, 'y': 775}, 'bottomright': {'x': 749, 'y': 949}},
+{'label': 'appbar', 'confidence': 0.31654927, 'topleft': {'x': 74, 'y': 0}, 'bottomright': {'x': 749, 'y': 146}},
+{'label': 'textfield', 'confidence': 0.09217384, 'topleft': {'x': 215, 'y': 288}, 'bottomright': {'x': 749, 'y': 434}},
+{'label': 'button', 'confidence': 0.11535523, 'topleft': {'x': 64, 'y': 761}, 'bottomright': {'x': 341, 'y': 971}}]
+# output = [
+# {'label': 'button', 'confidence': 0.67056483, 'topleft': {'x': 430, 'y': 50}, 'bottomright': {'x': 1304, 'y': 726}},
+# {'label': 'text', 'confidence': 0.46804085, 'topleft': {'x': 230, 'y': 50}, 'bottomright': {'x': 906, 'y': 249}},
+# ]
 
 #Add ids into dictionaries
 edited_output = []
@@ -99,10 +99,6 @@ for row in body_widgets:
         if(widg['id'] in should_remove):
             row.remove(widg)
 
-for row in body_widgets:
-    print(row)
-    print("\n\n")
-
 def transform_to_widget(to_transform):
     if(to_transform== 'text'):
         return 'Text'
@@ -119,6 +115,18 @@ def transform_to_widget(to_transform):
 
 app_ref = db.collection(u'app')
 
+#order elements in row
+tempList = []
+for row in body_widgets:
+    newlist = sorted(row, key=lambda k: k['topleft']['x']) 
+    tempList.append(newlist)
+
+body_widgets = tempList
+for row in body_widgets:
+    print(row)
+    print("\n\n")
+
+#Talk to firebase
 row_id = 0
 for row in body_widgets:
     if(len(row) > 0):
