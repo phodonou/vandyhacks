@@ -163,6 +163,13 @@ def renderUI(output):
                 widget_id +=1
             row_id +=1
 
+    for widget in app_widgets:
+        app_ref.document('app_widgets').set({
+            'appbar': 'appbar' in app_widgets,
+            'floatingactionbutton': 'floatingactionbutton' in app_widgets,
+            'sidebar': 'sidebar' in app_widgets,
+        })
+
 def update():
     output = run_model()
     renderUI(output)
