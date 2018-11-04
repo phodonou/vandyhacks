@@ -3,48 +3,34 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'component.dart';
 
 void main() async {
-  bool hasAppBar;
-  bool hasDrawer;
-  bool hasFloatingActionButton;
 
-  DocumentSnapshot doc = await Firestore.instance.collection('app').document('app_widgets').get();
-
-  if(doc.exists){
-    if(doc.data['appbar'] || doc.data['sidebar'] || doc.data['floatingactionbutton'] ){
-      if(doc.data['appbar']){
-        hasAppBar = true;
-      }
-      if(doc.data['sidebar']){
-        hasDrawer = true;
-      }
-      if(doc.data['floatingactionbutton']){
-        hasFloatingActionButton = true;
-      }
-    }
-  }
-
-  runApp(new MyApp(hasAppBar: hasAppBar,hasDrawer: hasDrawer, hasFloatingActionButton: hasFloatingActionButton,));
+  runApp(new MyApp());
 }
 
 class MyApp extends StatefulWidget{
-  final bool hasAppBar;
-  final bool hasDrawer;
-  final bool hasFloatingActionButton;
-
-  MyApp({this.hasAppBar, this.hasDrawer, this.hasFloatingActionButton});
 
   @override
   State<StatefulWidget> createState() {
-    return MyAppState(hasAppBar: hasAppBar, hasDrawer: hasDrawer, hasFloatingActionButton: hasFloatingActionButton);
+    return MyAppState();
   }
 }
+
 class MyAppState extends State<MyApp> {
-  final bool hasAppBar;
-  final bool hasDrawer;
-  final bool hasFloatingActionButton;
+  bool hasAppBar;
+  bool hasDrawer;
+  bool hasFloatingActionButton;
   final Firestore _f = Firestore.instance;
 
-  MyAppState({this.hasAppBar, this.hasDrawer, this.hasFloatingActionButton});
+  int i;
+
+  @override
+  void initState() {
+    hasAppBar = null;
+    hasDrawer = null;
+    hasFloatingActionButton = null;
+    i =0;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +42,7 @@ class MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
-        appBar: hasAppBar == null ? null : AppBar(title: Text('My Great App'),),
+        appBar: hasAppBar == null ? null : AppBar(title: Text('My Great App'), backgroundColor: Colors.blue,),
         floatingActionButton: hasFloatingActionButton == null ? null : FloatingActionButton(onPressed: (){},),
         drawer: hasDrawer == null ? null : Drawer(),
         body: StreamBuilder(
@@ -194,7 +180,7 @@ class MyAppState extends State<MyApp> {
     switch(widget){
       case  "Row": {
         return Container(
-          margin: EdgeInsets.only(left: (demensions[0] + .0)/10, top: (demensions[1] + .0)/10),
+          margin: EdgeInsets.only(left: (demensions[0] + .0)/7, top: (demensions[1] + .0)/7),
           child: Row(
             mainAxisAlignment:  MainAxisAlignment.spaceEvenly,
             children: children,
@@ -230,6 +216,27 @@ class MyAppState extends State<MyApp> {
         children.add( await makeComp(doc.reference));
       }
     }
+
+    for(DocumentSnapshot doc in snapshot.data.documents){
+      if(doc.documentID == "app_widgets"){
+        if(doc.exists){
+          if( doc.data['appbar'] || doc.data['sidebar'] || doc.data['floatingactionbutton'] ){
+            setState(() {
+              if(doc.data['appbar']){
+                hasAppBar = true;
+              }
+              if(doc.data['sidebar']){
+                hasDrawer = true;
+              }
+              if(doc.data['floatingactionbutton']){
+                hasFloatingActionButton = true;
+              }
+            });
+          }
+        }
+      }
+    }
+
     return children;
   }
 
